@@ -22,7 +22,7 @@ const Index = () => {
   } = useCart();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen pattern-bg">
       <Header cartCount={cartCount} onCartClick={() => setIsCartOpen(true)} />
       
       <main>
