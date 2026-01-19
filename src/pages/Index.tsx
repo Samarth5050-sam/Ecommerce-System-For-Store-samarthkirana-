@@ -1,12 +1,57 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import Header from "@/components/Header";
+import HeroBanner from "@/components/HeroBanner";
+import CategoryGrid from "@/components/CategoryGrid";
+import ProductGrid from "@/components/ProductGrid";
+import CartSidebar from "@/components/CartSidebar";
+import Footer from "@/components/Footer";
+import { useCart } from "@/hooks/useCart";
 
 const Index = () => {
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const {
+    cartItems,
+    cartTotal,
+    cartCount,
+    isCartOpen,
+    setIsCartOpen,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    clearCart,
+  } = useCart();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <Header cartCount={cartCount} onCartClick={() => setIsCartOpen(true)} />
+      
+      <main>
+        <HeroBanner />
+        
+        <CategoryGrid
+          selectedCategory={selectedCategory}
+          onCategorySelect={setSelectedCategory}
+        />
+        
+        <ProductGrid
+          selectedCategory={selectedCategory}
+          cartItems={cartItems}
+          onAddToCart={addToCart}
+          onUpdateQuantity={updateQuantity}
+        />
+      </main>
+
+      <Footer />
+
+      <CartSidebar
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        cartItems={cartItems}
+        cartTotal={cartTotal}
+        onUpdateQuantity={updateQuantity}
+        onRemoveFromCart={removeFromCart}
+        onClearCart={clearCart}
+      />
     </div>
   );
 };
