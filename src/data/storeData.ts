@@ -27,6 +27,25 @@ import lifebuoy from "@/assets/products/lifebuoy.jpg";
 import colgate from "@/assets/products/colgate.jpg";
 import hairOil from "@/assets/products/hair-oil.jpg";
 
+// New Branded Spices
+import everestTurmeric from "@/assets/products/everest-turmeric.jpg";
+import everestChilli from "@/assets/products/everest-chilli.jpg";
+import everestGaramMasala from "@/assets/products/everest-garam-masala.jpg";
+import suhanaCoriander from "@/assets/products/suhana-coriander.jpg";
+import suhanaBiryani from "@/assets/products/suhana-biryani.jpg";
+import suhanaKitchenKing from "@/assets/products/suhana-kitchen-king.jpg";
+import rambandhuCumin from "@/assets/products/rambandhu-cumin.jpg";
+import rambandhuChaat from "@/assets/products/rambandhu-chaat.jpg";
+import rambandhuPavBhaji from "@/assets/products/rambandhu-pavbhaji.jpg";
+
+// Whole Spices & Ingredients
+import blackPepper from "@/assets/products/black-pepper.jpg";
+import mustardSeeds from "@/assets/products/mustard-seeds.jpg";
+import cuminSeeds from "@/assets/products/cumin-seeds.jpg";
+import hing from "@/assets/products/hing.jpg";
+import methiSeeds from "@/assets/products/methi-seeds.jpg";
+import ajwain from "@/assets/products/ajwain.jpg";
+
 export const storeInfo: StoreInfo = {
   name: "Samarth Kirana & General Stores",
   owner: "Samarth Shinde",
@@ -57,11 +76,34 @@ export const products: Product[] = [
   { id: "5", name: "Moong Dal", nameHindi: "मूंग दाल", price: 130, unit: "1 kg", category: "pulses", image: moongDal, inStock: true },
   { id: "6", name: "Chana Dal", nameHindi: "चना दाल", price: 85, unit: "1 kg", category: "pulses", image: chanaDal, inStock: true },
   
-  // Spices & Masalas
+  // Spices & Masalas - Generic
   { id: "7", name: "Turmeric Powder", nameHindi: "हल्दी", price: 25, unit: "100 g", category: "spices", image: turmeric, inStock: true },
   { id: "8", name: "Red Chilli Powder", nameHindi: "लाल मिर्च", price: 40, unit: "100 g", category: "spices", image: redChilli, inStock: true },
   { id: "9", name: "Garam Masala", nameHindi: "गरम मसाला", price: 55, unit: "100 g", category: "spices", image: garamMasala, inStock: true, discount: 8 },
   { id: "10", name: "Coriander Powder", nameHindi: "धनिया पाउडर", price: 30, unit: "100 g", category: "spices", image: coriander, inStock: true },
+  
+  // Everest Spices
+  { id: "26", name: "Everest Turmeric", nameHindi: "एवरेस्ट हल्दी", price: 45, unit: "100 g", category: "spices", image: everestTurmeric, inStock: true },
+  { id: "27", name: "Everest Red Chilli", nameHindi: "एवरेस्ट लाल मिर्च", price: 55, unit: "100 g", category: "spices", image: everestChilli, inStock: true, discount: 5 },
+  { id: "28", name: "Everest Garam Masala", nameHindi: "एवरेस्ट गरम मसाला", price: 75, unit: "100 g", category: "spices", image: everestGaramMasala, inStock: true },
+  
+  // Suhana Spices
+  { id: "29", name: "Suhana Coriander", nameHindi: "सुहाना धनिया", price: 40, unit: "100 g", category: "spices", image: suhanaCoriander, inStock: true },
+  { id: "30", name: "Suhana Biryani Masala", nameHindi: "सुहाना बिरयानी मसाला", price: 65, unit: "50 g", category: "spices", image: suhanaBiryani, inStock: true, discount: 10 },
+  { id: "31", name: "Suhana Kitchen King", nameHindi: "सुहाना किचन किंग", price: 70, unit: "100 g", category: "spices", image: suhanaKitchenKing, inStock: true },
+  
+  // Rambandhu Spices
+  { id: "32", name: "Rambandhu Cumin", nameHindi: "रामबंधु जीरा", price: 50, unit: "100 g", category: "spices", image: rambandhuCumin, inStock: true },
+  { id: "33", name: "Rambandhu Chaat Masala", nameHindi: "रामबंधु चाट मसाला", price: 45, unit: "100 g", category: "spices", image: rambandhuChaat, inStock: true },
+  { id: "34", name: "Rambandhu Pav Bhaji", nameHindi: "रामबंधु पाव भाजी", price: 55, unit: "100 g", category: "spices", image: rambandhuPavBhaji, inStock: true, discount: 8 },
+  
+  // Whole Spices & Ingredients
+  { id: "35", name: "Black Pepper", nameHindi: "काली मिर्च", price: 120, unit: "100 g", category: "spices", image: blackPepper, inStock: true },
+  { id: "36", name: "Mustard Seeds", nameHindi: "राई", price: 25, unit: "100 g", category: "spices", image: mustardSeeds, inStock: true },
+  { id: "37", name: "Cumin Seeds (Jeera)", nameHindi: "जीरा", price: 60, unit: "100 g", category: "spices", image: cuminSeeds, inStock: true },
+  { id: "38", name: "Hing (Asafoetida)", nameHindi: "हींग", price: 85, unit: "50 g", category: "spices", image: hing, inStock: true },
+  { id: "39", name: "Methi Seeds", nameHindi: "मेथी दाना", price: 30, unit: "100 g", category: "spices", image: methiSeeds, inStock: true },
+  { id: "40", name: "Ajwain (Carom)", nameHindi: "अजवाइन", price: 35, unit: "100 g", category: "spices", image: ajwain, inStock: true },
   
   // Oils & Ghee
   { id: "11", name: "Sunflower Oil", nameHindi: "सूरजमुखी तेल", price: 180, unit: "1 L", category: "oils", image: sunflowerOil, inStock: true },
