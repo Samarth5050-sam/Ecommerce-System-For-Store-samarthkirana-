@@ -1,10 +1,7 @@
 import { useState } from "react";
-import { Phone, MapPin, ShoppingCart, Menu, User } from "lucide-react";
+import { Phone, MapPin, ShoppingCart, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { storeInfo } from "@/data/storeData";
-import { useAuth } from "@/contexts/AuthContext";
-import AuthModal from "./AuthModal";
-import UserMenu from "./UserMenu";
 
 interface HeaderProps {
   cartCount: number;
@@ -13,8 +10,6 @@ interface HeaderProps {
 
 const Header = ({ cartCount, onCartClick }: HeaderProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const { user, loading } = useAuth();
 
   return (
     <>
@@ -63,22 +58,6 @@ const Header = ({ cartCount, onCartClick }: HeaderProps) => {
                 <Phone className="h-5 w-5 text-primary" />
               </a>
 
-              {/* Auth button or User Menu */}
-              {!loading && (
-                user ? (
-                  <UserMenu />
-                ) : (
-                  <Button
-                    variant="outline"
-                    className="hidden sm:flex items-center gap-2"
-                    onClick={() => setIsAuthModalOpen(true)}
-                  >
-                    <User className="h-4 w-4" />
-                    <span>Login</span>
-                  </Button>
-                )
-              )}
-
               {/* Cart button */}
               <Button 
                 variant="cart" 
@@ -110,18 +89,6 @@ const Header = ({ cartCount, onCartClick }: HeaderProps) => {
           {/* Mobile dropdown menu */}
           {isMobileMenuOpen && (
             <div className="md:hidden pb-4 space-y-2 animate-slide-up">
-              {!user && (
-                <button
-                  onClick={() => {
-                    setIsAuthModalOpen(true);
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="flex items-center gap-2 p-3 rounded-lg bg-primary text-primary-foreground w-full"
-                >
-                  <User className="h-4 w-4" />
-                  <span>Login / Sign Up</span>
-                </button>
-              )}
               <a 
                 href={`tel:${storeInfo.contact}`} 
                 className="flex items-center gap-2 p-3 rounded-lg bg-muted text-foreground"
@@ -137,8 +104,6 @@ const Header = ({ cartCount, onCartClick }: HeaderProps) => {
           )}
         </div>
       </header>
-
-      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </>
   );
 };
