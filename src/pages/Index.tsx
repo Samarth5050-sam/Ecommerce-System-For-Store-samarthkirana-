@@ -9,6 +9,7 @@ import { useCart } from "@/hooks/useCart";
 
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const {
     cartItems,
     cartTotal,
@@ -35,6 +36,8 @@ const Index = () => {
         
         <ProductGrid
           selectedCategory={selectedCategory}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
           cartItems={cartItems}
           onAddToCart={addToCart}
           onUpdateQuantity={updateQuantity}
