@@ -1,15 +1,18 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Header from "@/components/Header";
 import HeroBanner from "@/components/HeroBanner";
 import CategoryGrid from "@/components/CategoryGrid";
 import ProductGrid from "@/components/ProductGrid";
 import CartSidebar from "@/components/CartSidebar";
+import LocationMap from "@/components/LocationMap";
 import Footer from "@/components/Footer";
 import { useCart } from "@/hooks/useCart";
 
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const productsRef = useRef<HTMLDivElement>(null);
+  
   const {
     cartItems,
     cartTotal,
@@ -22,26 +25,34 @@ const Index = () => {
     clearCart,
   } = useCart();
 
+  const handleShopNowClick = () => {
+    productsRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <div className="min-h-screen pattern-bg">
       <Header cartCount={cartCount} onCartClick={() => setIsCartOpen(true)} />
       
       <main>
-        <HeroBanner />
+        <HeroBanner onShopNowClick={handleShopNowClick} />
         
         <CategoryGrid
           selectedCategory={selectedCategory}
           onCategorySelect={setSelectedCategory}
         />
         
-        <ProductGrid
-          selectedCategory={selectedCategory}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          cartItems={cartItems}
-          onAddToCart={addToCart}
-          onUpdateQuantity={updateQuantity}
-        />
+        <div ref={productsRef} id="products">
+          <ProductGrid
+            selectedCategory={selectedCategory}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            cartItems={cartItems}
+            onAddToCart={addToCart}
+            onUpdateQuantity={updateQuantity}
+          />
+        </div>
+
+        <LocationMap />
       </main>
 
       <Footer />

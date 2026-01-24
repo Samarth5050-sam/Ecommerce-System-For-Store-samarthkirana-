@@ -29,8 +29,8 @@ const CartSidebar = ({
       .map((item) => `• ${item.name} x${item.quantity} - ₹${(item.discount ? item.price * (1 - item.discount / 100) : item.price) * item.quantity}`)
       .join("\n");
     
-    const message = `🛒 *New Order from ${storeInfo.name}*\n\n${orderText}\n\n*Total: ₹${cartTotal.toFixed(0)}*`;
-    const whatsappUrl = `https://wa.me/91${storeInfo.contact}?text=${encodeURIComponent(message)}`;
+    const message = `🛒 *New Order from ${storeInfo.name}*\n\n${orderText}\n\n💰 *Total: ₹${cartTotal.toFixed(0)}*\n\n📍 Please confirm availability and delivery time.`;
+    const whatsappUrl = `https://wa.me/${storeInfo.whatsappNumber}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank");
   };
 
