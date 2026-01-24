@@ -27,5 +27,7 @@ export interface StoreInfo {
   owner: string;
   contact: string;
   address: string;
+  fullAddress: string;
   tagline: string;
+  whatsappNumber: string;
 }
