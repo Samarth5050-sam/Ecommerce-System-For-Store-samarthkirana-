@@ -2,6 +2,8 @@ import { useState, useRef } from "react";
 import Header from "@/components/Header";
 import HeroBanner from "@/components/HeroBanner";
 import CategoryGrid from "@/components/CategoryGrid";
+import SpecialOffers from "@/components/SpecialOffers";
+import BudgetSection from "@/components/BudgetSection";
 import ProductGrid from "@/components/ProductGrid";
 import CartSidebar from "@/components/CartSidebar";
 import LocationMap from "@/components/LocationMap";
@@ -39,6 +41,20 @@ const Index = () => {
         <CategoryGrid
           selectedCategory={selectedCategory}
           onCategorySelect={setSelectedCategory}
+        />
+
+        {/* Special Offers Section */}
+        <SpecialOffers
+          cartItems={cartItems}
+          onAddToCart={addToCart}
+          onUpdateQuantity={updateQuantity}
+        />
+
+        {/* Budget Friendly Section */}
+        <BudgetSection
+          cartItems={cartItems}
+          onAddToCart={addToCart}
+          onUpdateQuantity={updateQuantity}
         />
         
         <div ref={productsRef} id="products">
