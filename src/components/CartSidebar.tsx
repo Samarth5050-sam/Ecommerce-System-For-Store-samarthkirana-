@@ -1,7 +1,8 @@
 import { X, Plus, Minus, ShoppingBag, Trash2, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CartItem } from "@/types/store";
+import { CartItem, Product } from "@/types/store";
 import { storeInfo } from "@/data/storeData";
+import CartRecommendations from "./CartRecommendations";
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface CartSidebarProps {
   onUpdateQuantity: (productId: string, quantity: number) => void;
   onRemoveFromCart: (productId: string) => void;
   onClearCart: () => void;
+  onAddToCart: (product: Product) => void;
 }
 
 const CartSidebar = ({
@@ -21,6 +23,7 @@ const CartSidebar = ({
   onUpdateQuantity,
   onRemoveFromCart,
   onClearCart,
+  onAddToCart,
 }: CartSidebarProps) => {
   if (!isOpen) return null;
 
@@ -138,6 +141,11 @@ const CartSidebar = ({
                 );
               })}
             </div>
+          )}
+
+          {/* AI Recommendations */}
+          {cartItems.length > 0 && (
+            <CartRecommendations cartItems={cartItems} onAddToCart={onAddToCart} />
           )}
         </div>
 

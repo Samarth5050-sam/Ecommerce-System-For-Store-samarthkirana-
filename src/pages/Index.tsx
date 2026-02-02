@@ -81,6 +81,7 @@ const Index = () => {
         onUpdateQuantity={updateQuantity}
         onRemoveFromCart={removeFromCart}
         onClearCart={clearCart}
+        onAddToCart={addToCart}
       />
     </div>
   );
