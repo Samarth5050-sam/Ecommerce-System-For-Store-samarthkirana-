@@ -1,15 +1,25 @@
-import { Plus, Minus, ShoppingBag } from "lucide-react";
+import { Plus, Minus, ShoppingBag, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Product, CartItem } from "@/types/store";
+import { cn } from "@/lib/utils";
 
 interface ProductCardProps {
   product: Product;
   cartItem?: CartItem;
   onAddToCart: (product: Product) => void;
   onUpdateQuantity: (productId: string, quantity: number) => void;
+  isFavorite?: boolean;
+  onToggleFavorite?: (productId: string) => void;
 }
 
-const ProductCard = ({ product, cartItem, onAddToCart, onUpdateQuantity }: ProductCardProps) => {
+const ProductCard = ({ 
+  product, 
+  cartItem, 
+  onAddToCart, 
+  onUpdateQuantity,
+  isFavorite = false,
+  onToggleFavorite,
+}: ProductCardProps) => {
   const discountedPrice = product.discount
     ? product.price * (1 - product.discount / 100)
     : product.price;
@@ -23,6 +33,24 @@ const ProductCard = ({ product, cartItem, onAddToCart, onUpdateQuantity }: Produ
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
+        
+        {/* Favorite button */}
+        {onToggleFavorite && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(
+              "absolute top-2 right-2 h-8 w-8 rounded-full bg-card/80 backdrop-blur-sm hover:bg-card shadow-md",
+              isFavorite && "text-destructive hover:text-destructive"
+            )}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleFavorite(product.id);
+            }}
+          >
+            <Heart className={cn("h-4 w-4", isFavorite && "fill-current")} />
+          </Button>
+        )}
         
         {product.discount && (
           <div className="absolute top-2 left-2 accent-gradient text-accent-foreground text-xs font-bold px-2 py-1 rounded-lg shadow-md">

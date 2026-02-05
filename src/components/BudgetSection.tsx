@@ -7,9 +7,17 @@ interface BudgetSectionProps {
   cartItems: CartItem[];
   onAddToCart: (product: Product) => void;
   onUpdateQuantity: (productId: string, quantity: number) => void;
+  isFavorite?: (productId: string) => boolean;
+  onToggleFavorite?: (productId: string) => void;
 }
 
-const BudgetSection = ({ cartItems, onAddToCart, onUpdateQuantity }: BudgetSectionProps) => {
+const BudgetSection = ({ 
+  cartItems, 
+  onAddToCart, 
+  onUpdateQuantity,
+  isFavorite,
+  onToggleFavorite,
+}: BudgetSectionProps) => {
   const budgetProducts = getBudgetProducts().slice(0, 12);
 
   if (budgetProducts.length === 0) return null;
@@ -49,6 +57,8 @@ const BudgetSection = ({ cartItems, onAddToCart, onUpdateQuantity }: BudgetSecti
                 cartItem={cartItems.find((item) => item.id === product.id)}
                 onAddToCart={onAddToCart}
                 onUpdateQuantity={onUpdateQuantity}
+                isFavorite={isFavorite?.(product.id)}
+                onToggleFavorite={onToggleFavorite}
               />
             </div>
           ))}

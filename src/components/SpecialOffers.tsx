@@ -7,9 +7,17 @@ interface SpecialOffersProps {
   cartItems: CartItem[];
   onAddToCart: (product: Product) => void;
   onUpdateQuantity: (productId: string, quantity: number) => void;
+  isFavorite?: (productId: string) => boolean;
+  onToggleFavorite?: (productId: string) => void;
 }
 
-const SpecialOffers = ({ cartItems, onAddToCart, onUpdateQuantity }: SpecialOffersProps) => {
+const SpecialOffers = ({ 
+  cartItems, 
+  onAddToCart, 
+  onUpdateQuantity,
+  isFavorite,
+  onToggleFavorite,
+}: SpecialOffersProps) => {
   const discountedProducts = getDiscountedProducts().slice(0, 8);
 
   if (discountedProducts.length === 0) return null;
@@ -49,6 +57,8 @@ const SpecialOffers = ({ cartItems, onAddToCart, onUpdateQuantity }: SpecialOffe
                 cartItem={cartItems.find((item) => item.id === product.id)}
                 onAddToCart={onAddToCart}
                 onUpdateQuantity={onUpdateQuantity}
+                isFavorite={isFavorite?.(product.id)}
+                onToggleFavorite={onToggleFavorite}
               />
             </div>
           ))}

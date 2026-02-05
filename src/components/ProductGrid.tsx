@@ -22,6 +22,8 @@ interface ProductGridProps {
   cartItems: CartItem[];
   onAddToCart: (product: Product) => void;
   onUpdateQuantity: (productId: string, quantity: number) => void;
+  isFavorite?: (productId: string) => boolean;
+  onToggleFavorite?: (productId: string) => void;
 }
 
 const ProductGrid = ({ 
@@ -30,7 +32,9 @@ const ProductGrid = ({
   onSearchChange,
   cartItems, 
   onAddToCart, 
-  onUpdateQuantity 
+  onUpdateQuantity,
+  isFavorite,
+  onToggleFavorite,
 }: ProductGridProps) => {
   const [sortOption, setSortOption] = useState<SortOption>("default");
 
@@ -178,6 +182,8 @@ const ProductGrid = ({
                   cartItem={cartItems.find((item) => item.id === product.id)}
                   onAddToCart={onAddToCart}
                   onUpdateQuantity={onUpdateQuantity}
+                  isFavorite={isFavorite?.(product.id)}
+                  onToggleFavorite={onToggleFavorite}
                 />
               </div>
             ))}

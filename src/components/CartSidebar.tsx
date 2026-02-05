@@ -1,8 +1,9 @@
-import { X, Plus, Minus, ShoppingBag, Trash2, Phone } from "lucide-react";
+import { X, Plus, Minus, ShoppingBag, Trash2, Phone, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CartItem, Product } from "@/types/store";
 import { storeInfo } from "@/data/storeData";
 import CartRecommendations from "./CartRecommendations";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ interface CartSidebarProps {
   onRemoveFromCart: (productId: string) => void;
   onClearCart: () => void;
   onAddToCart: (product: Product) => void;
+  onPlaceOrder?: (items: CartItem[], totalAmount: number) => Promise<unknown>;
 }
 
 const CartSidebar = ({
@@ -24,7 +26,10 @@ const CartSidebar = ({
   onRemoveFromCart,
   onClearCart,
   onAddToCart,
+  onPlaceOrder,
 }: CartSidebarProps) => {
+  const { user } = useAuth();
+
   if (!isOpen) return null;
 
   const handleWhatsAppOrder = () => {
@@ -35,6 +40,15 @@ const CartSidebar = ({
     const message = `🛒 *New Order from ${storeInfo.name}*\n\n${orderText}\n\n💰 *Total: ₹${cartTotal.toFixed(0)}*\n\n📍 Please confirm availability and delivery time.`;
     const whatsappUrl = `https://wa.me/${storeInfo.whatsappNumber}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank");
+  };
+
+  const handlePlaceOrder = async () => {
+    if (onPlaceOrder) {
+      const result = await onPlaceOrder(cartItems, cartTotal);
+      if (result) {
+        onClearCart();
+      }
+    }
   };
 
   return (
@@ -160,8 +174,19 @@ const CartSidebar = ({
 
             {/* Actions */}
             <div className="space-y-2">
+              {user && onPlaceOrder && (
+                <Button 
+                  variant="default" 
+                  size="lg" 
+                  className="w-full"
+                  onClick={handlePlaceOrder}
+                >
+                  <CheckCircle className="h-5 w-5 mr-2" />
+                  Place Order
+                </Button>
+              )}
               <Button 
-                variant="hero" 
+                variant={user ? "outline" : "hero"} 
                 size="lg" 
                 className="w-full"
                 onClick={handleWhatsAppOrder}
@@ -170,7 +195,7 @@ const CartSidebar = ({
                 Order via WhatsApp
               </Button>
               <Button 
-                variant="outline" 
+                variant="ghost" 
                 size="default" 
                 className="w-full"
                 onClick={onClearCart}
