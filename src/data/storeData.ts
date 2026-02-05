@@ -132,6 +132,11 @@ export const categories: Category[] = [
 
 export const products: Product[] = [
   // ========== GRAINS & RICE (Prices starting from ₹10) ==========
+  { id: "g28", name: "Poha Pouch", nameHindi: "पोहा पाउच", price: 10, unit: "100 g", category: "grains", image: poha, inStock: true },
+  { id: "g29", name: "Suji Small Pack", nameHindi: "सूजी छोटा पैक", price: 12, unit: "100 g", category: "grains", image: sujiRava, inStock: true },
+  { id: "g30", name: "Besan Small", nameHindi: "बेसन छोटा", price: 15, unit: "100 g", category: "grains", image: besan, inStock: true },
+  { id: "g31", name: "Maida Small", nameHindi: "मैदा छोटा", price: 10, unit: "100 g", category: "grains", image: maida, inStock: true },
+  { id: "g32", name: "Rice Pouch", nameHindi: "चावल पाउच", price: 15, unit: "200 g", category: "grains", image: sonaMasoori, inStock: true },
   { id: "g1", name: "Basmati Rice Premium", nameHindi: "बासमती चावल प्रीमियम", price: 125, unit: "1 kg", category: "grains", image: basmatiRice, inStock: true, discount: 10 },
   { id: "g2", name: "Basmati Rice Regular", nameHindi: "बासमती चावल", price: 90, unit: "1 kg", category: "grains", image: basmatiRice, inStock: true },
   { id: "g3", name: "Sona Masoori Rice", nameHindi: "सोना मसूरी चावल", price: 68, unit: "1 kg", category: "grains", image: sonaMasoori, inStock: true },
@@ -161,6 +166,10 @@ export const products: Product[] = [
   { id: "g27", name: "Nachni Flour", nameHindi: "नाचणी आटा", price: 65, unit: "500 g", category: "grains", image: wheatFlour, inStock: true },
 
   // ========== PULSES & DALS (Prices starting from ₹10) ==========
+  { id: "p26", name: "Chana Dal Pouch", nameHindi: "चना दाल पाउच", price: 12, unit: "100 g", category: "pulses", image: chanaDal, inStock: true },
+  { id: "p27", name: "Masoor Dal Pouch", nameHindi: "मसूर दाल पाउच", price: 12, unit: "100 g", category: "pulses", image: masoorDal, inStock: true },
+  { id: "p28", name: "Moong Dal Pouch", nameHindi: "मूंग दाल पाउच", price: 15, unit: "100 g", category: "pulses", image: moongDal, inStock: true },
+  { id: "p29", name: "Toor Dal Pouch", nameHindi: "तूर दाल पाउच", price: 18, unit: "100 g", category: "pulses", image: toorDal, inStock: true },
   { id: "p1", name: "Toor Dal", nameHindi: "तूर दाल", price: 145, unit: "1 kg", category: "pulses", image: toorDal, inStock: true, discount: 5 },
   { id: "p2", name: "Toor Dal", nameHindi: "तूर दाल", price: 78, unit: "500 g", category: "pulses", image: toorDal, inStock: true },
   { id: "p3", name: "Toor Dal Premium", nameHindi: "तूर दाल प्रीमियम", price: 168, unit: "1 kg", category: "pulses", image: toorDal, inStock: true },
@@ -189,6 +198,12 @@ export const products: Product[] = [
 
   // ========== SPICES & MASALAS (Prices starting from ₹10) ==========
   // Generic Spices
+  { id: "s31", name: "Turmeric Mini Pack", nameHindi: "हल्दी मिनी पैक", price: 10, unit: "25 g", category: "spices", image: turmeric, inStock: true },
+  { id: "s32", name: "Red Chilli Mini", nameHindi: "लाल मिर्च मिनी", price: 10, unit: "25 g", category: "spices", image: redChilli, inStock: true },
+  { id: "s33", name: "Coriander Mini", nameHindi: "धनिया मिनी", price: 10, unit: "25 g", category: "spices", image: coriander, inStock: true },
+  { id: "s34", name: "Cumin Mini Pack", nameHindi: "जीरा मिनी पैक", price: 15, unit: "25 g", category: "spices", image: cuminSeeds, inStock: true },
+  { id: "s35", name: "Mustard Seeds Mini", nameHindi: "राई मिनी", price: 10, unit: "25 g", category: "spices", image: mustardSeeds, inStock: true },
+  { id: "s36", name: "Garam Masala Mini", nameHindi: "गरम मसाला मिनी", price: 15, unit: "20 g", category: "spices", image: garamMasala, inStock: true },
   { id: "s1", name: "Turmeric Powder", nameHindi: "हल्दी पाउडर", price: 28, unit: "100 g", category: "spices", image: turmeric, inStock: true },
   { id: "s2", name: "Turmeric Powder", nameHindi: "हल्दी पाउडर", price: 48, unit: "200 g", category: "spices", image: turmeric, inStock: true },
   { id: "s3", name: "Red Chilli Powder", nameHindi: "लाल मिर्च पाउडर", price: 42, unit: "100 g", category: "spices", image: redChilli, inStock: true },
@@ -256,6 +271,9 @@ export const products: Product[] = [
   { id: "o25", name: "Cooking Oil Pouch", nameHindi: "खाना पकाने का तेल", price: 38, unit: "200 ml", category: "oils", image: sunflowerOil, inStock: true },
 
   // ========== DAIRY PRODUCTS (Prices starting from ₹10) ==========
+  { id: "d26", name: "Curd Small Cup", nameHindi: "दही छोटा कप", price: 10, unit: "50 g", category: "dairy", image: curd, inStock: true },
+  { id: "d27", name: "Buttermilk Pouch", nameHindi: "छाछ पाउच", price: 10, unit: "200 ml", category: "dairy", image: lassi, inStock: true },
+  { id: "d28", name: "Lassi Mini", nameHindi: "लस्सी मिनी", price: 15, unit: "100 ml", category: "dairy", image: lassi, inStock: true },
   { id: "d1", name: "Amul Milk (Full Cream)", nameHindi: "अमूल दूध (फुल क्रीम)", price: 72, unit: "1 L", category: "dairy", image: amulMilk, inStock: true },
   { id: "d2", name: "Amul Milk (Toned)", nameHindi: "अमूल दूध (टोंड)", price: 60, unit: "1 L", category: "dairy", image: amulMilk, inStock: true },
   { id: "d3", name: "Amul Milk Pouch", nameHindi: "अमूल दूध पाउच", price: 32, unit: "500 ml", category: "dairy", image: amulMilk, inStock: true },
@@ -283,6 +301,14 @@ export const products: Product[] = [
   { id: "d25", name: "Khoya (Mawa)", nameHindi: "खोया (मावा)", price: 125, unit: "200 g", category: "dairy", image: paneer, inStock: true },
 
   // ========== SNACKS & NAMKEEN (Prices starting from ₹10) ==========
+  { id: "sn26", name: "Parle Kismi", nameHindi: "पारले किस्मी", price: 10, unit: "50 g", category: "snacks", image: parleG, inStock: true },
+  { id: "sn27", name: "Monaco Biscuit", nameHindi: "मोनाको बिस्किट", price: 10, unit: "60 g", category: "snacks", image: marieGold, inStock: true },
+  { id: "sn28", name: "Bingo Chips", nameHindi: "बिंगो चिप्स", price: 10, unit: "25 g", category: "snacks", image: lays, inStock: true },
+  { id: "sn29", name: "Uncle Chips", nameHindi: "अंकल चिप्स", price: 10, unit: "25 g", category: "snacks", image: lays, inStock: true },
+  { id: "sn30", name: "Balaji Sev", nameHindi: "बालाजी सेव", price: 10, unit: "50 g", category: "snacks", image: sevBhujia, inStock: true },
+  { id: "sn31", name: "Tiger Biscuit", nameHindi: "टाइगर बिस्किट", price: 10, unit: "50 g", category: "snacks", image: parleG, inStock: true },
+  { id: "sn32", name: "50-50 Biscuit", nameHindi: "50-50 बिस्किट", price: 10, unit: "50 g", category: "snacks", image: marieGold, inStock: true },
+  { id: "sn33", name: "Hide & Seek Mini", nameHindi: "हाइड एंड सीक मिनी", price: 15, unit: "40 g", category: "snacks", image: goodDay, inStock: true },
   { id: "sn1", name: "Haldiram Sev Bhujia", nameHindi: "हल्दीराम सेव भुजिया", price: 48, unit: "200 g", category: "snacks", image: sevBhujia, inStock: true },
   { id: "sn2", name: "Haldiram Sev Bhujia", nameHindi: "हल्दीराम सेव भुजिया", price: 88, unit: "400 g", category: "snacks", image: sevBhujia, inStock: true },
   { id: "sn3", name: "Haldiram Aloo Bhujia", nameHindi: "हल्दीराम आलू भुजिया", price: 52, unit: "200 g", category: "snacks", image: alooBhujia, inStock: true },
@@ -310,6 +336,10 @@ export const products: Product[] = [
   { id: "sn25", name: "Papdi", nameHindi: "पापड़ी", price: 42, unit: "200 g", category: "snacks", image: sevBhujia, inStock: true },
 
   // ========== TEA & BEVERAGES (Prices starting from ₹10) ==========
+  { id: "b26", name: "Tea Sachet", nameHindi: "चाय सैशे", price: 10, unit: "25 g", category: "beverages", image: tataTea, inStock: true },
+  { id: "b27", name: "Coffee Sachet", nameHindi: "कॉफी सैशे", price: 10, unit: "Sachet", category: "beverages", image: nescafe, inStock: true },
+  { id: "b28", name: "Sugar Pouch", nameHindi: "चीनी पाउच", price: 10, unit: "100 g", category: "beverages", image: sugar, inStock: true },
+  { id: "b29", name: "Bru Coffee Sachet", nameHindi: "ब्रू कॉफी सैशे", price: 10, unit: "Sachet", category: "beverages", image: bruCoffee, inStock: true },
   { id: "b1", name: "Tata Tea Gold", nameHindi: "टाटा टी गोल्ड", price: 98, unit: "250 g", category: "beverages", image: tataTea, inStock: true },
   { id: "b2", name: "Tata Tea Gold", nameHindi: "टाटा टी गोल्ड", price: 185, unit: "500 g", category: "beverages", image: tataTea, inStock: true, discount: 5 },
   { id: "b3", name: "Tata Tea Premium", nameHindi: "टाटा टी प्रीमियम", price: 82, unit: "250 g", category: "beverages", image: tataTea, inStock: true },
@@ -337,6 +367,11 @@ export const products: Product[] = [
   { id: "b25", name: "Honey", nameHindi: "शहद", price: 325, unit: "500 g", category: "beverages", image: sugar, inStock: true },
 
   // ========== PERSONAL CARE - SOAPS (Prices starting from ₹10) ==========
+  { id: "pc41", name: "Nirma Soap", nameHindi: "निर्मा साबुन", price: 10, unit: "75 g", category: "personal", image: nirmaPowder, inStock: true },
+  { id: "pc42", name: "Liril Soap Mini", nameHindi: "लिरिल साबुन मिनी", price: 15, unit: "50 g", category: "personal", image: luxSoap, inStock: true },
+  { id: "pc43", name: "Toothbrush Basic", nameHindi: "टूथब्रश बेसिक", price: 10, unit: "1 pc", category: "personal", image: colgate, inStock: true },
+  { id: "pc44", name: "Colgate Mini", nameHindi: "कोलगेट मिनी", price: 15, unit: "20 g", category: "personal", image: colgate, inStock: true },
+  { id: "pc45", name: "Detergent Sachet", nameHindi: "डिटर्जेंट सैशे", price: 10, unit: "Sachet", category: "personal", image: surfExcel, inStock: true },
   { id: "pc1", name: "Lifebuoy Soap", nameHindi: "लाइफबॉय साबुन", price: 38, unit: "100 g", category: "personal", image: lifebuoy, inStock: true },
   { id: "pc2", name: "Lifebuoy Soap (4 Pack)", nameHindi: "लाइफबॉय साबुन (4 पैक)", price: 128, unit: "4x100 g", category: "personal", image: lifebuoy, inStock: true, discount: 10 },
   { id: "pc3", name: "Santoor Soap", nameHindi: "संतूर साबुन", price: 42, unit: "100 g", category: "personal", image: santoorSoap, inStock: true },
