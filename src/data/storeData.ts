@@ -430,4 +430,10 @@ export const getProductsByPriceRange = (minPrice: number, maxPrice: number) =>
 
 // Helper function to get cheapest products (under ₹50)
 export const getBudgetProducts = () =>
-  products.filter(product => product.price <= 50 && product.inStock);
+  products.filter(product => product.price <= 50 && product.inStock)
+    .sort((a, b) => a.price - b.price);
+
+// Helper function to get super saver products (₹10-20)
+export const getSuperSaverProducts = () =>
+  products.filter(product => product.price >= 10 && product.price <= 20 && product.inStock)
+    .sort((a, b) => a.price - b.price);
