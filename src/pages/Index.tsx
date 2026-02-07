@@ -40,6 +40,15 @@ const Index = () => {
     productsRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const handleCategorySelect = (categoryId: string | null) => {
+    setSelectedCategory(categoryId);
+    if (categoryId) {
+      setTimeout(() => {
+        productsRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
+  };
+
   return (
     <div className="min-h-screen pattern-bg">
       <Header 
@@ -55,7 +64,7 @@ const Index = () => {
         
         <CategoryGrid
           selectedCategory={selectedCategory}
-          onCategorySelect={setSelectedCategory}
+          onCategorySelect={handleCategorySelect}
         />
 
         {/* Special Offers Section */}
