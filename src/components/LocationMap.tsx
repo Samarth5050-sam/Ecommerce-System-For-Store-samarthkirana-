@@ -22,7 +22,7 @@ const LocationMap = () => {
           {/* Map Embed */}
           <div className="rounded-2xl overflow-hidden shadow-card h-[300px] md:h-[400px]">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d30486.17897251692!2d74.35!3d17.05!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc17e1d1c1c1c1c%3A0x1c1c1c1c1c1c1c1c!2sBavachi%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+              src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(storeInfo.fullAddress)}`}
               width="100%"
               height="100%"
               style={{ border: 0 }}
