@@ -114,7 +114,7 @@ export const storeInfo: StoreInfo = {
   owner: "Samarth Shinde",
   contact: "9699374346",
   address: "Bavachi",
-  fullAddress: "Bavachi, Tal. Walwa, Dist. Sangli, Maharashtra 415409, India",
+  fullAddress: "Bavachi, Tal. Walwa, Dist. Sangli, Maharashtra 416301, India",
   tagline: "Your Trusted Neighborhood Store",
   whatsappNumber: "919699374346"
 };

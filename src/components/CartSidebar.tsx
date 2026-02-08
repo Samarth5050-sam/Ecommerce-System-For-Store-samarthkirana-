@@ -1,9 +1,11 @@
-import { X, Plus, Minus, ShoppingBag, Trash2, Phone, CheckCircle } from "lucide-react";
+import { useState } from "react";
+import { X, Plus, Minus, ShoppingBag, Trash2, Phone, CheckCircle, QrCode } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CartItem, Product } from "@/types/store";
 import { storeInfo } from "@/data/storeData";
 import CartRecommendations from "./CartRecommendations";
 import { useAuth } from "@/contexts/AuthContext";
+import PaymentModal from "./PaymentModal";
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -29,27 +31,48 @@ const CartSidebar = ({
   onPlaceOrder,
 }: CartSidebarProps) => {
   const { user } = useAuth();
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
   if (!isOpen) return null;
 
   const handleWhatsAppOrder = () => {
-    const orderText = cartItems
-      .map((item) => `• ${item.name} x${item.quantity} - ₹${(item.discount ? item.price * (1 - item.discount / 100) : item.price) * item.quantity}`)
-      .join("\n");
+    const date = new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+    const invoiceNo = `INV-${Date.now().toString().slice(-6)}`;
     
-    const message = `🛒 *New Order from ${storeInfo.name}*\n\n${orderText}\n\n💰 *Total: ₹${cartTotal.toFixed(0)}*\n\n📍 Please confirm availability and delivery time.`;
+    let message = `📋 *ORDER - ${storeInfo.name}*\n`;
+    message += `━━━━━━━━━━━━━━━━━━━━\n`;
+    message += `📄 Order No: ${invoiceNo}\n`;
+    message += `📅 Date: ${date}\n`;
+    message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+    message += `🛒 *ITEMS:*\n\n`;
+    
+    cartItems.forEach((item, idx) => {
+      const price = item.discount ? item.price * (1 - item.discount / 100) : item.price;
+      message += `${idx + 1}. ${item.name} (${item.unit})\n`;
+      message += `   Qty: ${item.quantity} × ₹${price.toFixed(0)} = ₹${(price * item.quantity).toFixed(0)}\n\n`;
+    });
+    
+    message += `━━━━━━━━━━━━━━━━━━━━\n`;
+    message += `💰 *TOTAL: ₹${cartTotal.toFixed(0)}*\n`;
+    message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+    message += `📍 Please confirm availability and delivery.\n\n`;
+    message += `🙏 *Thank you for visiting our shop!*`;
+    
     const whatsappUrl = `https://wa.me/${storeInfo.whatsappNumber}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank");
   };
 
-  const handlePlaceOrder = async () => {
+  const handlePaymentComplete = () => {
+    setIsPaymentOpen(false);
     if (onPlaceOrder) {
-      const result = await onPlaceOrder(cartItems, cartTotal);
-      if (result) {
-        onClearCart();
-      }
+      onPlaceOrder(cartItems, cartTotal).then((result) => {
+        if (result) onClearCart();
+      });
+    } else {
+      onClearCart();
     }
   };
+
 
   return (
     <>
@@ -174,19 +197,19 @@ const CartSidebar = ({
 
             {/* Actions */}
             <div className="space-y-2">
-              {user && onPlaceOrder && (
-                <Button 
-                  variant="default" 
-                  size="lg" 
-                  className="w-full"
-                  onClick={handlePlaceOrder}
-                >
-                  <CheckCircle className="h-5 w-5 mr-2" />
-                  Place Order
-                </Button>
-              )}
+              {/* UPI Payment */}
               <Button 
-                variant={user ? "outline" : "hero"} 
+                variant="hero" 
+                size="lg" 
+                className="w-full"
+                onClick={() => setIsPaymentOpen(true)}
+              >
+                <QrCode className="h-5 w-5 mr-2" />
+                Pay Online (UPI)
+              </Button>
+              {/* WhatsApp Order */}
+              <Button 
+                variant="outline" 
                 size="lg" 
                 className="w-full"
                 onClick={handleWhatsAppOrder}
@@ -210,6 +233,15 @@ const CartSidebar = ({
           </div>
         )}
       </div>
+
+      {/* Payment Modal */}
+      <PaymentModal
+        isOpen={isPaymentOpen}
+        onClose={() => setIsPaymentOpen(false)}
+        cartItems={cartItems}
+        cartTotal={cartTotal}
+        onPaymentComplete={handlePaymentComplete}
+      />
     </>
   );
 };
