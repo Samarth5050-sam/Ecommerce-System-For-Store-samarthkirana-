@@ -201,6 +201,17 @@ const PaymentModal = ({
                   </p>
                 </div>
 
+                {/* Download Invoice */}
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="w-full"
+                  onClick={handleDownloadInvoice}
+                >
+                  <Download className="h-5 w-5 mr-2" />
+                  Download Invoice PDF
+                </Button>
+
                 {/* Send Invoice on WhatsApp */}
                 <Button
                   variant="hero"
