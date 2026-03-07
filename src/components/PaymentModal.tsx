@@ -78,7 +78,6 @@ const PaymentModal = ({
   };
 
   const handleDownloadInvoice = () => {
-    const { user } = useAuth;
     generateInvoicePDF({
       id: Date.now().toString(),
       items: cartItems,
