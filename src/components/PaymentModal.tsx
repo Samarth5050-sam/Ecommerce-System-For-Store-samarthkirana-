@@ -1,8 +1,11 @@
 import { useState } from "react";
-import { X, CheckCircle, QrCode, Phone } from "lucide-react";
+import { X, CheckCircle, QrCode, Phone, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CartItem } from "@/types/store";
 import { storeInfo } from "@/data/storeData";
+import { useAuth } from "@/contexts/AuthContext";
+import { generateInvoicePDF } from "@/lib/invoicePdf";
+import { toast } from "sonner";
 import qrImage from "@/assets/qr-payment.jpeg";
 
 interface PaymentModalProps {
@@ -71,6 +74,18 @@ const PaymentModal = ({
 
   const handleConfirmPayment = () => {
     setPaymentConfirmed(true);
+    toast.success("🎉 Payment Successful! Thank you for your purchase.");
+  };
+
+  const handleDownloadInvoice = () => {
+    generateInvoicePDF({
+      id: Date.now().toString(),
+      items: cartItems,
+      total_amount: cartTotal,
+      created_at: new Date().toISOString(),
+      customer_name: "Customer",
+      status: "paid",
+    });
   };
 
   const handleComplete = () => {
@@ -185,6 +200,17 @@ const PaymentModal = ({
                     🙏 Thank you for visiting our shop!
                   </p>
                 </div>
+
+                {/* Download Invoice */}
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="w-full"
+                  onClick={handleDownloadInvoice}
+                >
+                  <Download className="h-5 w-5 mr-2" />
+                  Download Invoice PDF
+                </Button>
 
                 {/* Send Invoice on WhatsApp */}
                 <Button
