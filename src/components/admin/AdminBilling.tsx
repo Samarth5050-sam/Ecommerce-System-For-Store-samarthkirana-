@@ -1,21 +1,31 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, Plus, Minus, Trash2, Receipt, Download, Printer } from "lucide-react";
+import { Search, Plus, Minus, Trash2, Receipt, Download, ScanLine, Keyboard } from "lucide-react";
 import { products, storeInfo } from "@/data/storeData";
 import { Product, CartItem } from "@/types/store";
 import { generateInvoicePDF } from "@/lib/invoicePdf";
 import { toast } from "sonner";
+import BarcodeScanner from "./BarcodeScanner";
 
-const GST_RATE = 0; // Set to 5, 12, 18 as needed
+const GST_RATE = 0;
+
+// Map product IDs to possible barcodes (in real store, this would be a DB lookup)
+const BARCODE_MAP: Record<string, string> = {};
+products.forEach(p => {
+  BARCODE_MAP[p.id] = p.id;
+  BARCODE_MAP[p.name.toLowerCase().replace(/\s+/g, "-")] = p.id;
+});
 
 const AdminBilling = () => {
   const [search, setSearch] = useState("");
   const [billItems, setBillItems] = useState<CartItem[]>([]);
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
+  const [scannerOpen, setScannerOpen] = useState(false);
+  const [manualBarcode, setManualBarcode] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
 
   const searchResults = useMemo(() => {
@@ -27,7 +37,7 @@ const AdminBilling = () => {
     ).slice(0, 8);
   }, [search]);
 
-  const addItem = (product: Product) => {
+  const addItem = useCallback((product: Product) => {
     setBillItems(prev => {
       const existing = prev.find(i => i.id === product.id);
       if (existing) {
@@ -37,13 +47,34 @@ const AdminBilling = () => {
     });
     setSearch("");
     searchRef.current?.focus();
+  }, []);
+
+  const handleBarcodeScan = useCallback((code: string) => {
+    const productId = BARCODE_MAP[code.toLowerCase()] || code.toLowerCase();
+    const product = products.find(p => 
+      p.id === productId || 
+      p.id === code || 
+      p.name.toLowerCase() === code.toLowerCase() ||
+      p.name.toLowerCase().replace(/\s+/g, "-") === code.toLowerCase()
+    );
+    if (product) {
+      addItem(product);
+      toast.success(`Added: ${product.name}`);
+    } else {
+      toast.error(`Product not found for barcode: ${code}`);
+    }
+  }, [addItem]);
+
+  const handleManualBarcode = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (manualBarcode.trim()) {
+      handleBarcodeScan(manualBarcode.trim());
+      setManualBarcode("");
+    }
   };
 
   const updateQty = (id: string, qty: number) => {
-    if (qty <= 0) {
-      setBillItems(prev => prev.filter(i => i.id !== id));
-      return;
-    }
+    if (qty <= 0) { setBillItems(prev => prev.filter(i => i.id !== id)); return; }
     setBillItems(prev => prev.map(i => i.id === id ? { ...i, quantity: qty } : i));
   };
 
@@ -53,7 +84,6 @@ const AdminBilling = () => {
     const price = item.discount ? item.price * (1 - item.discount / 100) : item.price;
     return sum + price * item.quantity;
   }, 0);
-
   const gstAmount = subtotal * GST_RATE / 100;
   const grandTotal = subtotal + gstAmount;
   const totalItems = billItems.reduce((sum, i) => sum + i.quantity, 0);
@@ -73,17 +103,43 @@ const AdminBilling = () => {
   };
 
   const handleNewBill = () => {
-    setBillItems([]);
-    setCustomerName("");
-    setCustomerPhone("");
-    setSearch("");
+    setBillItems([]); setCustomerName(""); setCustomerPhone(""); setSearch("");
     toast.info("New bill started");
   };
 
   return (
     <div className="grid lg:grid-cols-5 gap-6 animate-fade-in">
-      {/* Left: Product Search & List */}
       <div className="lg:col-span-3 space-y-4">
+        {/* Barcode Scanner Toggle */}
+        <div className="flex gap-2">
+          <Button
+            variant={scannerOpen ? "default" : "outline"}
+            className="flex-1"
+            onClick={() => setScannerOpen(!scannerOpen)}
+          >
+            <ScanLine className="h-4 w-4 mr-2" />
+            {scannerOpen ? "Camera Scanner Active" : "Open Camera Scanner"}
+          </Button>
+          <form onSubmit={handleManualBarcode} className="flex gap-2 flex-1">
+            <Input
+              placeholder="Enter barcode / product ID..."
+              value={manualBarcode}
+              onChange={e => setManualBarcode(e.target.value)}
+              className="h-10"
+            />
+            <Button type="submit" variant="outline" size="icon" className="h-10 w-10 flex-shrink-0">
+              <Keyboard className="h-4 w-4" />
+            </Button>
+          </form>
+        </div>
+
+        {/* Barcode Scanner */}
+        <BarcodeScanner
+          isOpen={scannerOpen}
+          onScan={handleBarcodeScan}
+          onClose={() => setScannerOpen(false)}
+        />
+
         {/* Search */}
         <Card>
           <CardContent className="p-4">
@@ -91,24 +147,18 @@ const AdminBilling = () => {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 ref={searchRef}
-                placeholder="Search product by name, barcode or ID..."
+                placeholder="Search product by name or ID..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="pl-9 h-12 text-base"
-                autoFocus
               />
             </div>
-            {/* Search Results */}
             {searchResults.length > 0 && (
               <div className="mt-2 border border-border rounded-xl overflow-hidden divide-y divide-border">
                 {searchResults.map(p => {
                   const price = p.discount ? p.price * (1 - p.discount / 100) : p.price;
                   return (
-                    <button
-                      key={p.id}
-                      onClick={() => addItem(p)}
-                      className="w-full flex items-center gap-3 p-3 hover:bg-muted/50 transition-colors text-left"
-                    >
+                    <button key={p.id} onClick={() => addItem(p)} className="w-full flex items-center gap-3 p-3 hover:bg-muted/50 transition-colors text-left">
                       <img src={p.image} alt={p.name} className="h-10 w-10 rounded-lg object-cover flex-shrink-0" />
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-sm text-foreground truncate">{p.name}</p>
@@ -138,7 +188,7 @@ const AdminBilling = () => {
             {billItems.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
                 <Receipt className="h-12 w-12 mx-auto mb-3 opacity-30" />
-                <p className="text-sm">Search and add products to start billing</p>
+                <p className="text-sm">Search, scan barcode, or enter product ID to start billing</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -181,13 +231,10 @@ const AdminBilling = () => {
             <CardTitle className="text-sm font-semibold">Bill Summary</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Customer Info */}
             <div className="space-y-2">
               <Input placeholder="Customer Name" value={customerName} onChange={e => setCustomerName(e.target.value)} className="h-9" />
               <Input placeholder="Phone Number" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} className="h-9" />
             </div>
-
-            {/* Totals */}
             <div className="space-y-2 p-3 bg-muted/50 rounded-xl">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Subtotal</span>
@@ -205,8 +252,6 @@ const AdminBilling = () => {
               </div>
               <p className="text-xs text-muted-foreground text-center">{totalItems} items</p>
             </div>
-
-            {/* Actions */}
             <div className="space-y-2">
               <Button variant="hero" size="lg" className="w-full" onClick={handlePrintInvoice} disabled={billItems.length === 0}>
                 <Download className="h-4 w-4 mr-2" /> Generate Invoice
@@ -215,8 +260,6 @@ const AdminBilling = () => {
                 <Receipt className="h-4 w-4 mr-2" /> New Bill
               </Button>
             </div>
-
-            {/* Store Info */}
             <div className="text-center space-y-1 pt-2 border-t border-border">
               <p className="text-xs font-semibold text-foreground">{storeInfo.name}</p>
               <p className="text-[10px] text-muted-foreground">{storeInfo.fullAddress}</p>

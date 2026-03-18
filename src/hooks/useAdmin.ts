@@ -71,7 +71,6 @@ export const useAdmin = () => {
       .order("created_at", { ascending: false });
 
     if (ordersData) {
-      // Fetch profiles for customer names
       const userIds = [...new Set(ordersData.map(o => o.user_id))];
       const { data: profiles } = await supabase
         .from("profiles")
@@ -114,12 +113,45 @@ export const useAdmin = () => {
   };
 
   useEffect(() => { checkAdmin(); }, [checkAdmin]);
+  
   useEffect(() => {
     if (isAdmin) {
       fetchOrders();
       fetchCustomers();
       fetchSuppliers();
     }
+  }, [isAdmin, fetchOrders, fetchCustomers, fetchSuppliers]);
+
+  // Real-time subscriptions for live data updates
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    const ordersChannel = supabase
+      .channel("admin-orders-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => {
+        fetchOrders();
+      })
+      .subscribe();
+
+    const profilesChannel = supabase
+      .channel("admin-profiles-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "profiles" }, () => {
+        fetchCustomers();
+      })
+      .subscribe();
+
+    const suppliersChannel = supabase
+      .channel("admin-suppliers-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "suppliers" }, () => {
+        fetchSuppliers();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(ordersChannel);
+      supabase.removeChannel(profilesChannel);
+      supabase.removeChannel(suppliersChannel);
+    };
   }, [isAdmin, fetchOrders, fetchCustomers, fetchSuppliers]);
 
   return {
