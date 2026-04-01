@@ -13,6 +13,7 @@ import OrderHistory from "@/components/OrderHistory";
 import { useCart } from "@/hooks/useCart";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useOrders } from "@/hooks/useOrders";
+import AIChatbot from "@/components/AIChatbot";
 
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
