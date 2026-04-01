@@ -130,6 +130,8 @@ const Index = () => {
         orders={orders}
         loading={ordersLoading}
       />
+
+      <AIChatbot />
     </div>
   );
 };
