@@ -35,6 +35,63 @@ export type Database = {
         }
         Relationships: []
       }
+      inventory: {
+        Row: {
+          barcode: string | null
+          category: string
+          created_at: string
+          discount: number | null
+          expiry_date: string | null
+          id: string
+          image: string | null
+          in_stock: boolean | null
+          low_stock_threshold: number
+          name: string
+          name_hindi: string | null
+          price: number
+          product_id: string
+          stock_quantity: number
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          barcode?: string | null
+          category: string
+          created_at?: string
+          discount?: number | null
+          expiry_date?: string | null
+          id?: string
+          image?: string | null
+          in_stock?: boolean | null
+          low_stock_threshold?: number
+          name: string
+          name_hindi?: string | null
+          price?: number
+          product_id: string
+          stock_quantity?: number
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          barcode?: string | null
+          category?: string
+          created_at?: string
+          discount?: number | null
+          expiry_date?: string | null
+          id?: string
+          image?: string | null
+          in_stock?: boolean | null
+          low_stock_threshold?: number
+          name?: string
+          name_hindi?: string | null
+          price?: number
+          product_id?: string
+          stock_quantity?: number
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           created_at: string
