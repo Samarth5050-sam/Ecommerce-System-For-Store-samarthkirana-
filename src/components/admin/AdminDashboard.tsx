@@ -1,20 +1,22 @@
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { AdminOrder, CustomerProfile } from "@/hooks/useAdmin";
+import { InventoryItem } from "@/hooks/useInventory";
 import { format, subDays, startOfDay, startOfMonth, isAfter } from "date-fns";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, LineChart, Line, CartesianGrid, Legend, Area, AreaChart
+  PieChart, Pie, Cell, AreaChart, Area, CartesianGrid, LineChart, Line
 } from "recharts";
 import {
   TrendingUp, TrendingDown, IndianRupee, ShoppingCart,
-  Users, Package, AlertTriangle, Star
+  Users, Package, AlertTriangle, Star, Clock, XCircle, CheckCircle
 } from "lucide-react";
-import { products } from "@/data/storeData";
 
 interface Props {
   orders: AdminOrder[];
   customers: CustomerProfile[];
+  inventory: InventoryItem[];
 }
 
 const CHART_COLORS = [
@@ -22,7 +24,7 @@ const CHART_COLORS = [
   "hsl(200, 70%, 50%)", "hsl(280, 60%, 55%)", "hsl(0, 70%, 55%)"
 ];
 
-const AdminDashboard = ({ orders, customers }: Props) => {
+const AdminDashboard = ({ orders, customers, inventory }: Props) => {
   const stats = useMemo(() => {
     const today = startOfDay(new Date());
     const monthStart = startOfMonth(new Date());
@@ -45,22 +47,25 @@ const AdminDashboard = ({ orders, customers }: Props) => {
       ? ((todayRevenue - yesterdayRevenue) / yesterdayRevenue * 100)
       : todayRevenue > 0 ? 100 : 0;
 
+    const lowStock = inventory.filter(i => i.stock_quantity > 0 && i.stock_quantity <= i.low_stock_threshold);
+    const outOfStock = inventory.filter(i => i.stock_quantity === 0);
+    const expiring = inventory.filter(i => {
+      if (!i.expiry_date) return false;
+      const diff = new Date(i.expiry_date).getTime() - Date.now();
+      return diff > 0 && diff < 7 * 24 * 60 * 60 * 1000;
+    });
+
     return {
-      totalOrders: orders.length,
-      todayOrders: todayOrders.length,
-      monthOrders: monthOrders.length,
-      todayRevenue,
-      monthRevenue,
-      totalRevenue,
-      avgOrderValue,
+      todayOrders: todayOrders.length, monthOrders: monthOrders.length,
+      todayRevenue, monthRevenue, totalRevenue, avgOrderValue,
       totalCustomers: customers.length,
       pendingOrders: orders.filter(o => o.status === "pending").length,
-      completedOrders: orders.filter(o => o.status === "completed").length,
       revenueChange,
-      totalProducts: products.length,
-      lowStockProducts: products.filter(p => !p.inStock).length,
+      totalProducts: inventory.length,
+      inStock: inventory.filter(i => i.stock_quantity > 0).length,
+      lowStock, outOfStock, expiring,
     };
-  }, [orders, customers]);
+  }, [orders, customers, inventory]);
 
   const dailyData = useMemo(() => {
     const days: { date: string; revenue: number; orders: number }[] = [];
@@ -112,11 +117,11 @@ const AdminDashboard = ({ orders, customers }: Props) => {
     { label: "Today's Revenue", value: `₹${stats.todayRevenue.toLocaleString("en-IN")}`, icon: IndianRupee, color: "text-primary", bg: "bg-primary/10", change: stats.revenueChange },
     { label: "Monthly Revenue", value: `₹${stats.monthRevenue.toLocaleString("en-IN")}`, icon: TrendingUp, color: "text-secondary", bg: "bg-secondary/10" },
     { label: "Today's Orders", value: stats.todayOrders.toString(), icon: ShoppingCart, color: "text-accent", bg: "bg-accent/10" },
-    { label: "Total Customers", value: stats.totalCustomers.toString(), icon: Users, color: "text-blue-500", bg: "bg-blue-500/10" },
-    { label: "Total Products", value: stats.totalProducts.toString(), icon: Package, color: "text-purple-500", bg: "bg-purple-500/10" },
-    { label: "Pending Orders", value: stats.pendingOrders.toString(), icon: AlertTriangle, color: "text-amber-500", bg: "bg-amber-500/10" },
-    { label: "Avg Order Value", value: `₹${stats.avgOrderValue.toFixed(0)}`, icon: Star, color: "text-emerald-500", bg: "bg-emerald-500/10" },
-    { label: "Total Revenue", value: `₹${stats.totalRevenue.toLocaleString("en-IN")}`, icon: IndianRupee, color: "text-rose-500", bg: "bg-rose-500/10" },
+    { label: "Customers", value: stats.totalCustomers.toString(), icon: Users, color: "text-primary", bg: "bg-primary/10" },
+    { label: "Total Products", value: stats.totalProducts.toString(), icon: Package, color: "text-secondary", bg: "bg-secondary/10" },
+    { label: "In Stock", value: stats.inStock.toString(), icon: CheckCircle, color: "text-secondary", bg: "bg-secondary/10" },
+    { label: "Pending Orders", value: stats.pendingOrders.toString(), icon: AlertTriangle, color: "text-destructive", bg: "bg-destructive/10" },
+    { label: "Avg Order", value: `₹${stats.avgOrderValue.toFixed(0)}`, icon: Star, color: "text-primary", bg: "bg-primary/10" },
   ];
 
   return (
@@ -146,9 +151,65 @@ const AdminDashboard = ({ orders, customers }: Props) => {
         ))}
       </div>
 
+      {/* Live Stock Alerts */}
+      {(stats.outOfStock.length > 0 || stats.lowStock.length > 0 || stats.expiring.length > 0) && (
+        <div className="grid lg:grid-cols-3 gap-4">
+          {stats.outOfStock.length > 0 && (
+            <Card className="border-destructive/30">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-semibold flex items-center gap-2 text-destructive">
+                  <XCircle className="h-4 w-4" /> Out of Stock ({stats.outOfStock.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-1.5 max-h-40 overflow-y-auto">
+                {stats.outOfStock.slice(0, 10).map(item => (
+                  <div key={item.id} className="flex items-center justify-between text-sm">
+                    <span className="text-foreground truncate">{item.name}</span>
+                    <Badge variant="destructive" className="text-[10px]">0 left</Badge>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+          {stats.lowStock.length > 0 && (
+            <Card className="border-amber-500/30">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-semibold flex items-center gap-2 text-amber-600">
+                  <AlertTriangle className="h-4 w-4" /> Low Stock ({stats.lowStock.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-1.5 max-h-40 overflow-y-auto">
+                {stats.lowStock.slice(0, 10).map(item => (
+                  <div key={item.id} className="flex items-center justify-between text-sm">
+                    <span className="text-foreground truncate">{item.name}</span>
+                    <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 text-[10px]">{item.stock_quantity} left</Badge>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+          {stats.expiring.length > 0 && (
+            <Card className="border-orange-500/30">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-semibold flex items-center gap-2 text-orange-600">
+                  <Clock className="h-4 w-4" /> Expiring Soon ({stats.expiring.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-1.5 max-h-40 overflow-y-auto">
+                {stats.expiring.slice(0, 10).map(item => (
+                  <div key={item.id} className="flex items-center justify-between text-sm">
+                    <span className="text-foreground truncate">{item.name}</span>
+                    <Badge variant="outline" className="text-[10px]">{item.expiry_date}</Badge>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
+
       {/* Charts Row */}
       <div className="grid lg:grid-cols-2 gap-6">
-        {/* Revenue Trend */}
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-semibold">Revenue Trend (Last 7 Days)</CardTitle>
@@ -165,20 +226,16 @@ const AdminDashboard = ({ orders, customers }: Props) => {
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis dataKey="date" fontSize={11} tick={{ fill: "hsl(var(--muted-foreground))" }} />
                 <YAxis fontSize={11} tick={{ fill: "hsl(var(--muted-foreground))" }} />
-                <Tooltip
-                  contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: 12 }}
-                  formatter={(v: number) => [`₹${v.toLocaleString("en-IN")}`, "Revenue"]}
-                />
+                <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: 12 }} formatter={(v: number) => [`₹${v.toLocaleString("en-IN")}`, "Revenue"]} />
                 <Area type="monotone" dataKey="revenue" stroke="hsl(25, 85%, 50%)" fill="url(#revGrad)" strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        {/* Order Status Pie */}
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold">Order Status Distribution</CardTitle>
+            <CardTitle className="text-sm font-semibold">Order Status</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={280}>
@@ -193,9 +250,8 @@ const AdminDashboard = ({ orders, customers }: Props) => {
         </Card>
       </div>
 
-      {/* Second Charts Row */}
+      {/* Second Row */}
       <div className="grid lg:grid-cols-2 gap-6">
-        {/* Category Revenue */}
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-semibold">Revenue by Category</CardTitle>
@@ -206,20 +262,16 @@ const AdminDashboard = ({ orders, customers }: Props) => {
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis type="number" fontSize={11} tick={{ fill: "hsl(var(--muted-foreground))" }} />
                 <YAxis dataKey="name" type="category" fontSize={11} width={80} tick={{ fill: "hsl(var(--muted-foreground))" }} />
-                <Tooltip
-                  contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: 12 }}
-                  formatter={(v: number) => [`₹${v.toLocaleString("en-IN")}`, "Revenue"]}
-                />
+                <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: 12 }} formatter={(v: number) => [`₹${v.toLocaleString("en-IN")}`, "Revenue"]} />
                 <Bar dataKey="value" fill="hsl(142, 50%, 40%)" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        {/* Orders Trend */}
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold">Daily Orders (Last 7 Days)</CardTitle>
+            <CardTitle className="text-sm font-semibold">Daily Orders</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={280}>
@@ -239,14 +291,14 @@ const AdminDashboard = ({ orders, customers }: Props) => {
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <Star className="h-4 w-4 text-amber-500" /> Best Selling Products
+            <Star className="h-4 w-4 text-primary" /> Best Selling Products
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {topProducts.map((p, i) => (
               <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-muted/50 hover:bg-muted transition-colors">
-                <div className="h-10 w-10 rounded-lg hero-gradient flex items-center justify-center text-primary-foreground text-sm font-bold flex-shrink-0">
+                <div className="h-10 w-10 rounded-lg bg-primary flex items-center justify-center text-primary-foreground text-sm font-bold flex-shrink-0">
                   #{i + 1}
                 </div>
                 <div className="min-w-0">

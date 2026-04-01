@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useAuth } from "@/contexts/AuthContext";
+import { useInventory } from "@/hooks/useInventory";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
@@ -32,6 +33,7 @@ const navItems = [
 
 const Admin = () => {
   const { isAdmin, loading, orders, customers, suppliers, addSupplier, updateOrderStatus, refetchOrders } = useAdmin();
+  const { items: inventoryItems } = useInventory();
   const { signOut } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -58,7 +60,7 @@ const Admin = () => {
 
   const renderContent = () => {
     switch (activeTab) {
-      case "dashboard": return <AdminDashboard orders={orders} customers={customers} />;
+      case "dashboard": return <AdminDashboard orders={orders} customers={customers} inventory={inventoryItems} />;
       case "billing": return <AdminBilling />;
       case "orders": return <AdminOrders orders={orders} onUpdateStatus={updateOrderStatus} onRefetch={refetchOrders} />;
       case "inventory": return <AdminInventory />;
@@ -67,20 +69,18 @@ const Admin = () => {
       case "analytics": return <AdminAnalytics orders={orders} customers={customers} />;
       case "discounts": return <AdminDiscounts />;
       case "notifications": return <AdminNotifications orders={orders} />;
-      default: return <AdminDashboard orders={orders} customers={customers} />;
+      default: return <AdminDashboard orders={orders} customers={customers} inventory={inventoryItems} />;
     }
   };
 
   return (
     <div className="min-h-screen bg-background flex">
-      {/* Sidebar */}
       <aside className={cn(
         "fixed left-0 top-0 h-full bg-card border-r border-border z-40 transition-all duration-300 flex flex-col",
         sidebarCollapsed ? "w-16" : "w-60"
       )}>
-        {/* Logo */}
         <div className="p-4 border-b border-border flex items-center gap-3">
-          <div className="h-9 w-9 rounded-lg hero-gradient flex items-center justify-center flex-shrink-0">
+          <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
             <ShieldCheck className="h-5 w-5 text-primary-foreground" />
           </div>
           {!sidebarCollapsed && (
@@ -91,7 +91,6 @@ const Admin = () => {
           )}
         </div>
 
-        {/* Nav Items */}
         <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
           {navItems.map(item => (
             <button
@@ -110,7 +109,6 @@ const Admin = () => {
           ))}
         </nav>
 
-        {/* Sidebar Footer */}
         <div className="p-2 border-t border-border space-y-1">
           <button
             onClick={() => navigate("/")}
@@ -129,20 +127,13 @@ const Admin = () => {
         </div>
       </aside>
 
-      {/* Main Content */}
       <main className={cn(
         "flex-1 transition-all duration-300",
         sidebarCollapsed ? "ml-16" : "ml-60"
       )}>
-        {/* Top Bar */}
         <header className="sticky top-0 z-30 bg-card/80 backdrop-blur-md border-b border-border px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            >
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setSidebarCollapsed(!sidebarCollapsed)}>
               <LayoutDashboard className="h-4 w-4" />
             </Button>
             <div>
@@ -155,13 +146,12 @@ const Admin = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-full hero-gradient flex items-center justify-center text-xs font-bold text-primary-foreground">
+            <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-xs font-bold text-primary-foreground">
               SA
             </div>
           </div>
         </header>
 
-        {/* Page Content */}
         <div className="p-6">
           {renderContent()}
         </div>
