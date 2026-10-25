@@ -94,18 +94,25 @@ export function computeLine(line: BillLineInput): ComputedLine {
   const discount_factor = 1 - discount_pct / 100;
   const gross = line.unit_price * line.quantity * discount_factor;
 
-  let taxable: number;
-  let gst: number;
+  let taxableExact: number;
+  let gstExact: number;
   if (line.gst_rate === 0) {
-    taxable = gross;
-    gst = 0;
+    taxableExact = gross;
+    gstExact = 0;
   } else if (tax_inclusive) {
-    taxable = gross / (1 + line.gst_rate / 100);
-    gst = gross - taxable;
+    taxableExact = gross / (1 + line.gst_rate / 100);
+    gstExact = gross - taxableExact;
   } else {
-    taxable = gross;
-    gst = gross * (line.gst_rate / 100);
+    taxableExact = gross;
+    gstExact = gross * (line.gst_rate / 100);
   }
+
+  const taxable_value = round2(taxableExact);
+  const gst_amount = round2(gstExact);
+  // CGST/SGST split; the second half absorbs rounding so the halves always
+  // add back to the displayed GST amount (standard on Indian tax invoices).
+  const cgst = round2(gstExact / 2);
+  const sgst = round2(gst_amount - cgst);
 
   return {
     product_id: line.product_id,
@@ -116,13 +123,13 @@ export function computeLine(line: BillLineInput): ComputedLine {
     discount_pct,
     hsn_code: line.hsn_code ?? null,
     gross_amount: round2(gross),
-    taxable_value: round2(taxable),
+    taxable_value,
     gst_rate: line.gst_rate,
     tax_inclusive,
-    gst_amount: round2(gst),
-    cgst: round2(gst / 2),
-    sgst: round2(gst / 2),
-    line_total: round2(tax_inclusive ? gross : gross + gst),
+    gst_amount,
+    cgst,
+    sgst,
+    line_total: round2(taxable_value + gst_amount),
   };
 }
 
@@ -152,7 +159,9 @@ export function computeInvoice(
   const subtotal = computed.reduce((s, l) => s + l.gross_amount, 0);
   const taxable_total = computed.reduce((s, l) => s + l.taxable_value, 0);
   const gst_total = computed.reduce((s, l) => s + l.gst_amount, 0);
-  const pre_round_total = subtotal + (lines.some(l => (l.tax_inclusive ?? true) === false) ? gst_total : 0);
+  const cgst_total = computed.reduce((s, l) => s + l.cgst, 0);
+  const sgst_total = computed.reduce((s, l) => s + l.sgst, 0);
+  const pre_round_total = computed.reduce((s, l) => s + l.line_total, 0);
   const grand_total = Math.round(pre_round_total);
   const rounding_adjustment = round2(grand_total - pre_round_total);
 
@@ -169,8 +178,8 @@ export function computeInvoice(
     subtotal: round2(subtotal),
     discount_total: round2(discount_total),
     taxable_total: round2(taxable_total),
-    cgst_total: round2(computed.reduce((s, l) => s + l.cgst, 0)),
-    sgst_total: round2(computed.reduce((s, l) => s + l.sgst, 0)),
+    cgst_total: round2(cgst_total),
+    sgst_total: round2(sgst_total),
     gst_total: round2(gst_total),
     rounding_adjustment,
     grand_total,
