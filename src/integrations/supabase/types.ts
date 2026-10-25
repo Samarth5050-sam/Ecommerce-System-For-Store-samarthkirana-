@@ -38,57 +38,180 @@ export type Database = {
       inventory: {
         Row: {
           barcode: string | null
+          base_unit: string | null
+          batch_number: string | null
+          brand: string | null
           category: string
           created_at: string
           discount: number | null
           expiry_date: string | null
+          gst_rate: number
+          hsn_code: string | null
           id: string
           image: string | null
           in_stock: boolean | null
           low_stock_threshold: number
+          mrp: number
           name: string
           name_hindi: string | null
           price: number
           product_id: string
+          purchase_price: number
+          sku: string | null
+          stock_qty: number
           stock_quantity: number
+          tax_inclusive: boolean
           unit: string
+          units_per_package: number
           updated_at: string
         }
         Insert: {
           barcode?: string | null
+          base_unit?: string | null
+          batch_number?: string | null
+          brand?: string | null
           category: string
           created_at?: string
           discount?: number | null
           expiry_date?: string | null
+          gst_rate?: number
+          hsn_code?: string | null
           id?: string
           image?: string | null
           in_stock?: boolean | null
           low_stock_threshold?: number
+          mrp?: number
           name: string
           name_hindi?: string | null
           price?: number
           product_id: string
+          purchase_price?: number
+          sku?: string | null
+          stock_qty?: number
           stock_quantity?: number
+          tax_inclusive?: boolean
           unit?: string
+          units_per_package?: number
           updated_at?: string
         }
         Update: {
           barcode?: string | null
+          base_unit?: string | null
+          batch_number?: string | null
+          brand?: string | null
           category?: string
           created_at?: string
           discount?: number | null
           expiry_date?: string | null
+          gst_rate?: number
+          hsn_code?: string | null
           id?: string
           image?: string | null
           in_stock?: boolean | null
           low_stock_threshold?: number
+          mrp?: number
           name?: string
           name_hindi?: string | null
           price?: number
           product_id?: string
+          purchase_price?: number
+          sku?: string | null
+          stock_qty?: number
           stock_quantity?: number
+          tax_inclusive?: boolean
           unit?: string
+          units_per_package?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      invoices: {
+        Row: {
+          amount_paid: number
+          balance_due: number
+          cgst_total: number
+          client_ref: string | null
+          created_at: string
+          customer_name: string | null
+          customer_phone: string | null
+          discount_total: number
+          grand_total: number
+          gst_total: number
+          id: string
+          invoice_no: string
+          invoice_type: string
+          is_demo: boolean
+          item_count: number
+          items: Json
+          notes: string | null
+          payment_method: string
+          payment_status: string
+          quantity_total: number
+          rounding_adjustment: number
+          sgst_total: number
+          status: string
+          subtotal: number
+          taxable_total: number
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          amount_paid?: number
+          balance_due?: number
+          cgst_total?: number
+          client_ref?: string | null
+          created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          discount_total?: number
+          grand_total?: number
+          gst_total?: number
+          id?: string
+          invoice_no: string
+          invoice_type?: string
+          is_demo?: boolean
+          item_count?: number
+          items?: Json
+          notes?: string | null
+          payment_method?: string
+          payment_status?: string
+          quantity_total?: number
+          rounding_adjustment?: number
+          sgst_total?: number
+          status?: string
+          subtotal?: number
+          taxable_total?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount_paid?: number
+          balance_due?: number
+          cgst_total?: number
+          client_ref?: string | null
+          created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          discount_total?: number
+          grand_total?: number
+          gst_total?: number
+          id?: string
+          invoice_no?: string
+          invoice_type?: string
+          is_demo?: boolean
+          item_count?: number
+          items?: Json
+          notes?: string | null
+          payment_method?: string
+          payment_status?: string
+          quantity_total?: number
+          rounding_adjustment?: number
+          sgst_total?: number
+          status?: string
+          subtotal?: number
+          taxable_total?: number
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -122,6 +245,44 @@ export type Database = {
         }
         Relationships: []
       }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          created_by: string | null
+          id: string
+          invoice_id: string
+          method: string
+          notes: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          invoice_id: string
+          method?: string
+          notes?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          invoice_id?: string
+          method?: string
+          notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           address: string | null
@@ -151,6 +312,60 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      stock_movements: {
+        Row: {
+          balance_after: number | null
+          created_at: string
+          created_by: string | null
+          id: string
+          inventory_id: string | null
+          invoice_id: string | null
+          movement_type: string
+          notes: string | null
+          product_id: string | null
+          quantity_delta: number
+        }
+        Insert: {
+          balance_after?: number | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          inventory_id?: string | null
+          invoice_id?: string | null
+          movement_type: string
+          notes?: string | null
+          product_id?: string | null
+          quantity_delta: number
+        }
+        Update: {
+          balance_after?: number | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          inventory_id?: string | null
+          invoice_id?: string | null
+          movement_type?: string
+          notes?: string | null
+          product_id?: string | null
+          quantity_delta?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_movements_inventory_id_fkey"
+            columns: ["inventory_id"]
+            isOneToOne: false
+            referencedRelation: "inventory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       suppliers: {
         Row: {
@@ -217,6 +432,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      finalize_sale: { Args: { p_payload: Json }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

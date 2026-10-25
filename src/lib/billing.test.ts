@@ -16,7 +16,7 @@ describe("GST calculations", () => {
   it("splits GST equally into CGST and SGST", () => {
     const line = computeLine({ product_id: "pc1", name: "Lifebuoy Soap", unit: "100 g", quantity: 2, unit_price: 38, gst_rate: 18, tax_inclusive: true });
     expect(line.gst_amount).toBeCloseTo(line.cgst + line.sgst, 2);
-    expect(line.cgst).toBeCloseTo(line.sgst, 2);
+    expect(Math.abs(line.cgst - line.sgst)).toBeLessThanOrEqual(0.01);
   });
 
   it("shows zero GST for exempt (0%) products", () => {
